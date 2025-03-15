@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+spacy
+pandas
+numpy
+scikit-learn
+torch
+transformers
+pickle-mixin
+joblib
