@@ -1,7 +1,11 @@
 from fastapi import FastAPI
 
-app = FastAPI()
+from app.ner_model import load_model, predict_entities
 
-@app.get("/")
-def home():
-    return {"message": "NER API is running!"}
+app = FastAPI()
+nlp = load_model()
+
+@app.post("/predict")
+def predict(text: str):
+    entities = predict_entities(nlp, text)
+    return {"entities": entities}
