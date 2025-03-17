@@ -1,0 +1,13 @@
+
+services:
+  ner_api:
+    build: .
+    container_name: ner_api
+    command: "uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app  # ✅ App code + model directory included
+    env_file:
+      - .env
+    restart: unless-stopped

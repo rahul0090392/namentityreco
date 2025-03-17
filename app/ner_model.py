@@ -1,19 +1,32 @@
-import pickle
+import os
 
 import spacy
+from dotenv import load_dotenv
 
-MODEL_PATH = "ner_model.pkl"
+# Load environment variables
+load_dotenv()
+
+MODEL_PATH = os.getenv("MODEL_PATH", "app/ner_model_best")
+
 
 def load_model():
-    """Load the pre-trained SpaCy NER model."""
-    return spacy.load("en_core_web_sm")
+    """Load the trained NER model."""
+    if not os.path.exists(MODEL_PATH):
+        raise FileNotFoundError(f"❌ Model not found at {MODEL_PATH}. Check your path!")
 
-def save_model(nlp):
-    """Save the trained NER model."""
-    with open(MODEL_PATH, "wb") as f:
-        pickle.dump(nlp, f)
+    print(f"✅ Loading NER model from {MODEL_PATH}...")
+    return spacy.load(MODEL_PATH)
 
-def load_saved_model():
-    """Load the saved NER model."""
-    with open(MODEL_PATH, "rb") as f:
-        return pickle.load(f)
+
+def predict_entities(nlp, text):
+    """Predict named entities from the input text."""
+    doc = nlp(text)
+    return [
+        {
+            "text": ent.text,
+            "start": ent.start_char,
+            "end": ent.end_char,
+            "label": ent.label_,
+        }
+        for ent in doc.ents
+    ]
